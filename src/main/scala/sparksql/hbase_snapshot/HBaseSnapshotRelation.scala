@@ -51,12 +51,9 @@ case class HBaseSnapshotRelation(@transient val hbaseProps: Map[String, String])
 
   LOG.info(
     s"""
-       |------------------------------------------------------------------------------------
-       |HBase Table Fields: ${hbaseTableFields.mkString("\n  ", "\n  ", "\n")}
-       |Spark Table Fields: ${registerTableFields.mkString("\n  ", "\n  ", "\n")}
-       |Fields Relations:  ${fieldsRelations.mkString("\n  ", "\n  ", "\n")}
-       |------------------------------------------------------------------------------------
-  """.stripMargin)
+       |HBase Table Name: $hbaseTableName
+       |Fields Relations: ${fieldsRelations.mkString("\n  ", "\n  ", "\n")}
+    """.stripMargin)
 
   override def schema: StructType = StructType(
     hbaseTableFields.map { field =>
@@ -67,6 +64,7 @@ case class HBaseSnapshotRelation(@transient val hbaseProps: Map[String, String])
         case "long" => LongType
         case "float" => FloatType
         case "double" => DoubleType
+        case "boolean" => BooleanType
       }
       StructField(name, relatedType)
     }
@@ -133,6 +131,7 @@ object Resolver extends Serializable {
     case "long" => Bytes.toLong(bytes)
     case "float" => Bytes.toFloat(bytes)
     case "double" => Bytes.toDouble(bytes)
+    case "boolean" => Bytes.toBoolean(bytes)
   }
 
 
